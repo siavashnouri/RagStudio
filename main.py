@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableSequence, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents import Document
-from src.query_translation import MultiQuery
+from src.query_translation import MultiQuery, RAGFusion
 vector_client = QdrantClient()
 # vector_client.create_collection(
 #     collection_name="test_collection",
@@ -51,8 +51,8 @@ def context_merge(contexts:list[Document]):
     contexts = list(set(contexts))
     context = "\n".join(contexts)
     return context
-template = "please answer base on this contexts:\n\n {context}\n\n question is: {question}"
-retriever_chain = {"question": MultiQuery(llm=llm)} | raptor.retriever.map() | context_merge
+template = "please answer **ONLY** base on this contexts:\n\n {context}\n\n question is: {question}"
+# retriever_chain = {"question": MultiQuery(llm=llm)} | raptor.retriever.map() | context_merge
 
-chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=template) | llm | StrOutputParser()
+chain = {"context": RAGFusion(llm=llm, retriever=raptor.retriever), "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=template) | llm | StrOutputParser()
 print(chain.invoke("what is the backend in Deep Agent and what is for"))
