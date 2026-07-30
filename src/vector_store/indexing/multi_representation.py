@@ -33,7 +33,7 @@ class MultiRepresentation(Indexing):
             | StrOutputParser()
         )
         summaries = chain.batch(inputs= documents, config={"max_concurrency": 4})
-        # id_key="doc_id"
+        id_key="doc_id"
         # retriever = MultiVectorRetriever(
         #     docstore=self.__byte_store,
         #     vectorstore=self.__vector_store,
