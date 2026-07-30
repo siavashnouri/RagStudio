@@ -12,6 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence, RunnablePassthrough
 from qdrant_client.models import Filter, FieldCondition, Range
+from langchain_qdrant import QdrantVectorStore
 class Node(BaseModel):
     id:str
     text:str
@@ -34,7 +35,10 @@ class RAPTOR(Indexing):
         self.__llm = llm
         self.__vector_store = vector_store
         self.__byte_store = byte_store
-        self.__retriever = RAPTORRetrieverQdrant(vector_store=self.__vector_store, byte_store=self.__byte_store, top_k=3)
+        if isinstance(self.__vector_store, QdrantVectorStore):
+            self.__retriever = RAPTORRetrieverQdrant(vector_store=self.__vector_store, byte_store=self.__byte_store, top_k=3)
+        else:
+            raise Exception(f"retriever {self.__retriever} (instance of {type(self.__retriever)}) is not supported")
 
         
 
