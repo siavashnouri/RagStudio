@@ -11,7 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableSequence, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents import Document
-from src.query_translation import MultiQuery, RAGFusion, Decomposition
+from src.query_translation import MultiQuery, RAGFusion, Decomposition, StepBack
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -53,5 +53,5 @@ template = "please answer **ONLY** base on this contexts:\n\n {context}\n\n ques
 # retriever_chain = {"question": MultiQuery(llm=llm)} | raptor.retriever.map() | context_merge
 
 # chain = {"context": RAGFusion(llm=llm, retriever=raptor.retriever), "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=template) | llm | StrOutputParser()
-chain = MultiQuery(llm=llm, retriever=raptor.retriever)
+chain = StepBack(llm=llm, retriever=raptor.retriever)
 print(chain.invoke("what is the backend in Deep Agent and what is for"))

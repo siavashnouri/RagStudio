@@ -45,6 +45,6 @@ class MultiQuery(QueryTranslation):
 
         template = ChatPromptTemplate.from_template(template=template)
         retriever_chain = {"question": RunnablePassthrough(), "count": lambda x: self._message_count} | template |self._llm | StrOutputParser() | self._clean_and_split | self._retriever.map() | self._context_merge
-        chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=self.TEMPLATE) | self._llm | StrOutputParser()
+        chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=self.PROMPT_TEMPLATE) | self._llm | StrOutputParser()
 
         return chain

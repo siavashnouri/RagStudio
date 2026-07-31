@@ -34,5 +34,5 @@ class RAGFusion(MultiQuery):
                 Original question: {question}"""
         template = ChatPromptTemplate.from_template(template=template)
         retriever_chain = {"question": RunnablePassthrough()} | template | self._llm | StrOutputParser() | self._clean_and_split | self._retriever.map() | self._reciprocal_rank_fusion
-        chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=self.TEMPLATE) | self._llm | StrOutputParser()
+        chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=self.PROMPT_TEMPLATE) | self._llm | StrOutputParser()
         return chain
