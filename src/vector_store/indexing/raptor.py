@@ -48,7 +48,6 @@ class RAPTOR(Indexing):
         all_text = "\n".join([doc.page_content for doc in documents])
         splitted = splitter.split_text(all_text)
 
-
         nodes = {
             node.id: node for node in [Node(id=str(uuid4()), text=t, level=1) for t in splitted]
         }
@@ -139,6 +138,16 @@ class RAPTORRetrieverQdrant (BaseRetriever):
 
         ids = list(set(ids))
         documents = self.byte_store.mget(ids)
+        return documents
+
+    async def _aget_relevant_documents(self, query, *, run_manager):
+        documents = await self.vector_store.asimilarity_search(query=query, filter=Filter(must=[FieldCondition(key="metadata.level", range=Range(gte=2))]), k=self.top_k)
+        ids = []
+        for doc in documents:
+            ids.extend(doc.metadata['children'])
+
+        ids = list(set(ids))
+        documents = await self.byte_store.amget(ids)
         return documents
 
         

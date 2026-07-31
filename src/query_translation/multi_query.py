@@ -42,7 +42,9 @@ class MultiQuery(QueryTranslation):
                 Provide these alternative questions separated by newlines.
 
                 Original question: {question}"""
-        template = template.format(count=self._message_count)
+
         template = ChatPromptTemplate.from_template(template=template)
-        chain = {"question": RunnablePassthrough()} | template |self._llm | StrOutputParser() | self._clean_and_split | self._retriever.map() | self._context_merge
+        retriever_chain = {"question": RunnablePassthrough(), "count": lambda x: self._message_count} | template |self._llm | StrOutputParser() | self._clean_and_split | self._retriever.map() | self._context_merge
+        chain = {"context": retriever_chain, "question": RunnablePassthrough()} | ChatPromptTemplate.from_template(template=self.TEMPLATE) | self._llm | StrOutputParser()
+
         return chain

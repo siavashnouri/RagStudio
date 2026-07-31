@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from langchain_core.runnables import Runnable
 
 class QueryTranslation(Runnable):
-
+    TEMPLATE = "please answer **ONLY** base on this contexts:\n\n {context}\n\n question is: {question}"
 
 
     @abstractmethod
