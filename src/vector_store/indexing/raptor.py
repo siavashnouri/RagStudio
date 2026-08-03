@@ -131,6 +131,7 @@ class RAPTORRetrieverQdrant (BaseRetriever):
     byte_store:BaseStore
     top_k:int=3
     def _get_relevant_documents(self, query, *, run_manager):
+        print(query)
         documents = self.vector_store.similarity_search(query=query, filter=Filter(must=[FieldCondition(key="metadata.level", range=Range(gte=2))]), k=self.top_k)
         ids = []
         for doc in documents:

@@ -18,14 +18,6 @@ class StepBack(QueryTranslation):
 
             Your task is to generate ONE step-back question.
 
-            A step-back question should:
-            - Generalize the original question.
-            - Focus on the underlying concepts, principles, or broader context.
-            - Avoid mentioning unnecessary specific details such as names, dates, IDs, or exact values when possible.
-            - NOT answer the original question.
-            - NOT introduce new assumptions.
-            - Return only the generated question.
-
             Examples:
 
             Original:
@@ -33,22 +25,6 @@ class StepBack(QueryTranslation):
 
             Step-back:
             What factors affect the performance and accuracy of approximate nearest neighbor indexes?
-
-            ---
-
-            Original:
-            How can I use LangGraph to build a multi-agent system?
-
-            Step-back:
-            What are the design principles of multi-agent systems?
-
-            ---
-
-            Original:
-            What is the maximum upload size in FastAPI?
-
-            Step-back:
-            How does FastAPI handle file uploads and request size limitations?
 
             ---
 
@@ -61,6 +37,6 @@ class StepBack(QueryTranslation):
         template = ChatPromptTemplate.from_template(template=template)
 
         step_back_retriever_chain = {"question": RunnablePassthrough()} | template | self._llm | StrOutputParser() | self._retriever
-        original_retriever_chain = {"question": RunnablePassthrough()} | self._retriever
-        chain = {"question": RunnablePassthrough(), 'step_back_context': step_back_retriever_chain, "original_context": original_retriever_chain} | ChatPromptTemplate.from_template(self.PROMPT_TEMPLATE) | self._llm | StrOutputParser()
+        # original_retriever_chain = {"question": RunnablePassthrough()} | | self._retriever
+        chain = {"question": RunnablePassthrough(), 'step_back_context': step_back_retriever_chain, "original_context": self._retriever} | ChatPromptTemplate.from_template(self.PROMPT_TEMPLATE) | self._llm | StrOutputParser()
         return chain
